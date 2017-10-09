@@ -1,4 +1,4 @@
-import numpy
+from numpy import random as nprand, transpose, sign, dot, linalg, ones
 import matplotlib.pyplot as plt
 import random
 
@@ -12,16 +12,16 @@ def PlotLine(line, xMin=-1, xMax=+1, color='k', alpha=1):
 # Q5
 def leastSquare(Samples, noise=0, display=False, retPoints=False):
     #Generate Line
-    p1 = numpy.random.uniform(-1, 1, 2)
-    p2 = numpy.random.uniform(-1, 1, 2)
+    p1 = nprand.uniform(-1, 1, 2)
+    p2 = nprand.uniform(-1, 1, 2)
     line = [p2[0]*p1[1] - p2[1]*p1[0], p2[1]-p1[1], p1[0]-p2[0]]
 
     #Generate Samples
-    x = numpy.random.uniform(-1, 1, Samples)
-    y = numpy.random.uniform(-1, 1, Samples)
-    coordinateMatrix = numpy.transpose([numpy.ones(Samples), x, y])
+    x = nprand.uniform(-1, 1, Samples)
+    y = nprand.uniform(-1, 1, Samples)
+    coordinateMatrix = transpose([ones(Samples), x, y])
 
-    label = numpy.sign(numpy.dot(coordinateMatrix, line))
+    label = sign(dot(coordinateMatrix, line))
     label[label == 0] = 1  # sign(0) = 1
 
     # Add Noise
@@ -29,8 +29,8 @@ def leastSquare(Samples, noise=0, display=False, retPoints=False):
     for i in noisy:
         label[i] *= -1
 
-    solution = numpy.linalg.lstsq(coordinateMatrix, label)[0]
-    testSolution = numpy.sign(numpy.dot(coordinateMatrix, solution))
+    solution = linalg.lstsq(coordinateMatrix, label)[0]
+    testSolution = sign(dot(coordinateMatrix, solution))
     miss = 0
     for i in range(Samples):
         if label[i] != testSolution[i]:
@@ -72,13 +72,13 @@ def trainedLS(NewSamples, trainSamples, noise=0):
     line, solution, missEin = leastSquare(trainSamples, noise)
 
     # Generate new samples
-    x = numpy.random.uniform(-1, 1, NewSamples)
-    y = numpy.random.uniform(-1, 1, NewSamples)
-    coordinateMatrix = numpy.transpose([numpy.ones(NewSamples), x, y])
-    label = numpy.sign(numpy.dot(coordinateMatrix, line))
+    x = nprand.uniform(-1, 1, NewSamples)
+    y = nprand.uniform(-1, 1, NewSamples)
+    coordinateMatrix = transpose([ones(NewSamples), x, y])
+    label = sign(dot(coordinateMatrix, line))
     label[label == 0] = 1  # sign(0) = 1
 
-    testSolution =  numpy.sign(numpy.dot(coordinateMatrix, solution))
+    testSolution =  sign(dot(coordinateMatrix, solution))
     miss = 0
     for i in range(NewSamples):
         if label[i] != testSolution[i]:
@@ -103,7 +103,7 @@ def perceptron(Samples, noise=0):
     while 1:
         iterations += 1
 
-        testL = numpy.sign(numpy.dot(pointsMatrix, solution))
+        testL = sign(dot(pointsMatrix, solution))
         testL[testL==0] = 1
 
         badLabel = []
@@ -113,7 +113,7 @@ def perceptron(Samples, noise=0):
 
         if not len(badLabel):   #No bad points, break
             break
-        k = numpy.random.choice(badLabel)   #Choose a random bad point
+        k = nprand.choice(badLabel)   #Choose a random bad point
 
         #Adjust weights
         solution += label[k]*pointsMatrix[k]
@@ -134,6 +134,7 @@ def testPerceptron(Iterations, trainSamples, noise=0):
 
 # Q5
 # testLeastSquares(Iterations,Samples, noise=0)
+print("Linear regression testing\n\n")
 print("Testing Ein")
 
 testLeastSquares(1000, 100)

@@ -1,15 +1,15 @@
-import numpy as np
+from numpy import random, sum, min
 from time import time
 
 def flipCoins(coins, flips):
     allThrows = [None] * (coins)
     for i in range(coins):
-        allThrows[i] = np.sum((np.random.randint(0, 2, size=flips)))
+        allThrows[i] = sum((random.randint(0, 2, size=flips)))
 
-    return [allThrows[0], np.random.choice(allThrows), np.min(allThrows)]
+    return [allThrows[0], random.choice(allThrows), min(allThrows)]
 
 
-def test(Runs, coins, flips):
+def testFlipCoins(Runs, coins, flips):
     cum1 = 0
     cumRand = 0
     cumMin = 0
@@ -23,16 +23,24 @@ def test(Runs, coins, flips):
     return [cum1, cumRand, cumMin]
 
 
-def Run(runs, coins, flips):
-    np.random.seed()
+def testFlipCoins(Runs, Coins, Flips):
+    random.seed()
     timeStart = time()
+    cum1 = 0
+    cumRand = 0
+    cumMin = 0
 
     print("Starting Test")
-    results = test(int(runs), int(coins), int(flips))
-    avg1 = results[0]/(runs*flips)
-    avgRand = results[1]/(runs*flips)
-    print(results[2])
-    avgMin = results[2]/(runs*flips)
+    for i in range(Runs):
+        # print(i)
+        curr = flipCoins(Coins, Flips)
+        cum1 += curr[0]
+        cumRand += curr[1]
+        cumMin += curr[2]
+
+    avg1 = cum1/(Runs*Flips)
+    avgRand = cumRand/(Runs*Flips)
+    avgMin = cumMin/(Runs*Flips)
 
     timeEnd = time()
     print("Avg first: %f; Avg rand: %f; Avg min: %f" % (avg1, avgRand, avgMin))
@@ -40,6 +48,7 @@ def Run(runs, coins, flips):
 
 
 # Q1
-# Run(runs, coins, flips)
-Run(1500, 1000, 10)
+# testFlipCoins(Runs, Coins, Flips)
+print("Testing coin flips")
+testFlipCoins(1500, 1000, 10)
 
