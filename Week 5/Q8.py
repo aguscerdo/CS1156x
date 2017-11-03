@@ -1,5 +1,4 @@
 import numpy as np
-import random
 
 def generate_line():
     p1 = np.random.uniform(-1, 1, 2)
@@ -9,12 +8,21 @@ def generate_line():
 
 def SGD(w, point, label):
     numerator = np.multiply(point, label)
-    denominator = (1 + np.exp(-label*np.dot(w, point)))
-    error = np.divide(numerator, denominator)
+    denominator = (1 + np.exp(label*np.dot(w, point)))
+    error = -np.divide(numerator, denominator)
     return error
 
 
-def logistic_regression(samples, threshold = 0.01, lr=0.1, test_samples=1000):
+def cross_entropy_test(weights, target, test_size=1000):
+    # Generate test data
+    test_points = np.array([np.ones(test_size), np.random.uniform(-1, 1, test_size), np.random.uniform(-1, 1, test_size)]).reshape(3, test_size)
+    test_label = np.sign(np.dot(target, test_points)).reshape(1, test_size)
+
+    err = np.log(1 + np.exp(-1 * np.multiply(test_label, np.dot(weights, test_points))))
+    return np.average(err)
+
+
+def logistic_regression(samples, threshold = 0.01, lr=0.1, test_size=1000):
     line = generate_line()  # Create target function
     points = [np.ones(samples), np.random.uniform(-1, 1, samples), np.random.uniform(-1, 1, samples)]   # Creat sample data
     label = np.sign(np.dot(line, points)).reshape(1, samples)   # Label sample data
@@ -34,26 +42,20 @@ def logistic_regression(samples, threshold = 0.01, lr=0.1, test_samples=1000):
         dw = np.linalg.norm(w - previous_w) # Obtain magnitude of descent
         if np.any(dw < threshold): break
 
-    norm = np.linalg.norm(w)    # Normalize the vector
-    w = -np.divide(w, norm)  # For some reason w has the opposite sign of line
+    # Test with Cross-Entropy-Error
+    error = cross_entropy_test(w, line, test_size)
 
-    # Test
-    test_points = [np.ones(test_samples), np.random.uniform(-1, 1, test_samples), np.random.uniform(-1, 1, test_samples)]
-    test_label = np.sign(np.dot(line, test_points, )).reshape(1, test_samples)
-    new_labels = np.sign(np.dot(w, test_points)).reshape(1, test_samples)
-
-    error = np.average(np.not_equal(test_label, new_labels))
-    return [error/test_samples, epochs]
+    return [error, epochs]
 
 
-def test_logistic_regression(samples, runs, threshold=0.01, lr=0.1, test_samples=1000):
+def test_logistic_regression(samples, runs, threshold=0.01, lr=0.1, test_size=1000):
     error = 0
     epochs = 0
     i = runs
     while i:
         print("Run %d" % i)
         i -= 1
-        result = logistic_regression(samples, threshold, lr, test_samples)
+        result = logistic_regression(samples, threshold, lr, test_size)
         error += result[0]
         epochs += result[1]
 
@@ -63,7 +65,7 @@ def test_logistic_regression(samples, runs, threshold=0.01, lr=0.1, test_samples
     return [error, epochs]
 
 
-results = test_logistic_regression(samples=100, runs=10, threshold=0.01, lr=0.01, test_samples=1000)
+results = test_logistic_regression(samples=100, runs=100, threshold=0.01, lr=0.01, test_size=1000)
 
 # Q8
 # Out of sample error
