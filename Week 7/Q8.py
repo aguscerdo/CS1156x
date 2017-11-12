@@ -116,18 +116,18 @@ def test(N, iterations, N_test=5000):
 
 # Q8
 # For N = 10, 1000 trials, percentage of SVG better than PLA
-result_8 = test(10, 1000, N_test=15000)
-print("Q8: E_svg < E_pla = %.4f\n" % result_8[0])
+result_8 = test(10, 1000, N_test=10000)
+print("Q8: N=10 SVG better than PLA: %.4f\n" % result_8[0])
 
 
 # Q9
 # For N = 100, 1000 trials, percentage of SVG better than PLA
-result_9_10 = test(100, 1000, N_test=15000)
-print("Q9: E_svg < E_pla = %.4f\n" % result_9_10[0])
+result_9_10 = test(100, 1000, N_test=10000)
+print("Q9: N=100, SVG better than PLA: %.4f\n" % result_9_10[0])
 
 
 # Q10
 # Average number of support vectors for N = 100
-print("Q10: Avg support vectors = %.5f\n" % result_9_10[1])
+print("Q10: Support vectors = %.2f\n" % result_9_10[1])
 
 
